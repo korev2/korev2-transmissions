@@ -29,7 +29,45 @@
       80% { text-shadow: 0.1em 0 blue; }
       100% { text-shadow: -0.1em -0.1em red; }
     }
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 22%, 24%, 55% { opacity: 0.3; }
+}
 
+@keyframes glitch-exit {
+  0% { opacity: 1; transform: scale(1) rotate(0deg); filter: none; }
+  20% { transform: scale(1.1) skewX(-5deg); filter: brightness(2); }
+  40% { transform: scale(0.9) skewX(5deg); filter: contrast(2); }
+  60% { transform: scale(1.2) skewY(-8deg); filter: grayscale(1); }
+  80% { transform: scale(0.8) skewY(8deg); filter: blur(3px); }
+  100% { opacity: 0; transform: scale(3); filter: opacity(0); }
+}
+
+#transmissionOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: black;
+  color: #00ffcc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  z-index: 9999;
+  text-align: center;
+  cursor: pointer;
+  animation: flicker 2s infinite;
+}
+
+#transmissionOverlay h1,
+#transmissionOverlay p {
+  animation: flicker 1.5s infinite;
+}
+
+#transmissionOverlay.fade-out {
+  animation: glitch-exit 1.5s forwards;
+}
     .tag {
       font-size: 0.8rem;
       color: #888;
@@ -49,7 +87,17 @@
   </style>
 </head>
 <body>
+<!-- Transmission Overlay -->
+<div id="transmissionOverlay">
+  <h1>KORE.V2 TRANSMISSION // STANDBY</h1>
+  <p>tap to begin transmission</p>
+</div>
 
+<!-- Background Audio -->
+<audio id="bg-audio" loop preload="auto">
+  <source src="cold_transmission.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
   <div class="block tag">// kore.v2 : leak.001 : fragment.encoded</div>
 
   <div class="block glitch-text">
@@ -78,6 +126,18 @@
   <footer>
     [Memory.Fragment_END] — Verified Link: korev2.com/leak001
   </footer>
+<script>
+  const overlay = document.getElementById('transmissionOverlay');
+  const audio = document.getElementById('bg-audio');
 
+  overlay.addEventListener('click', () => {
+    audio.play().then(() => {
+      overlay.classList.add('fade-out');
+      setTimeout(() => overlay.style.display = 'none', 1500);
+    }).catch((err) => {
+      console.error("Audio failed to play:", err);
+    });
+  });
+</script>
 </body>
 </html>
